@@ -7,3 +7,4 @@ function main() {
 //
 // Google Apps Script GitHub Assistant: Error	[github assistant] undefined
 // Manage your gas code with github/github enterprise/bitbucket/gitlab
+//
