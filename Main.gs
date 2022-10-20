@@ -1,10 +1,8 @@
 function main() {
-  //
-  //
+  let userProperties = PropertiesService.getUserProperties();
+  let jiraNfq = new Jira(userProperties.getProperty('JIRA_NFQ_HOST'), userProperties.getProperty('JIRA_NFQ_USER'), userProperties.getProperty('JIRA_NFQ_PASSWORD'));
+  let jiraAtlantic = new Jira(userProperties.getProperty('JIRA_ATLANTIC_HOST'), userProperties.getProperty('JIRA_ATLANTIC_USER'), userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
+
+  jiraNfq.logToConsoleCreadentials();
+  jiraAtlantic.logToConsoleCreadentials();
 }
-// https://script.google.com/home/usersettings
-// Enable "Google Apps Script API"
-//
-// Google Apps Script GitHub Assistant: Error	[github assistant] undefined
-// Manage your gas code with github/github enterprise/bitbucket/gitlab
-//
