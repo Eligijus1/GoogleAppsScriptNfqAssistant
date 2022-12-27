@@ -361,44 +361,69 @@ class Jira {
   }
 
   /**
-   * Assign specified user QA tasks to anotherspecified user.
+   * Find user id by email.
    * 
-   * https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issues/#api-rest-api-3-issue-issueidorkey-assignee-put
-   * 
-   * TODO: implement
+   * https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-user-search/#api-rest-api-3-user-search-get
    */
-  assignQaTasksToAnotherPerson(emailAddressFrom, emailAddressTo) {
+  findUserIdByEmail(email) {
+    let url = this.host + "/rest/api/3/user/search?query=" + email;
     let encCred = Utilities.base64Encode(this.user + ':' + this.password);
-    let url = this.host + "/rest/api/3/worklog/list";
     let headers = { "Authorization": "Basic " + encCred };
-    let fromQaTasks = this.jiraAtlantic.searchForIssues('status=QA AND assignee="eligijus.stugys@nfq.lt"');
-
-    let requestData = {
-      "ids": atlanticTodayWorkLogIds
-    };
 
     let options = {
-      "method": "POST",
+      "method": "GET",
       "contentType": "application/json",
-      "headers": headers,
-      "payload": JSON.stringify(requestData)
+      "headers": headers
     };
 
     let response = UrlFetchApp.fetch(url, options);
     let parsedResponse = JSON.parse(response);
 
-    /*
     if (parsedResponse.length > 0) {
-      parsedResponse.forEach(function (value) {
-        if (value.author.emailAddress === emailAddress) {
-          //console.info(value.timeSpent);
-          //console.info(value.timeSpentSeconds);
-          timeSpentSeconds += value.timeSpentSeconds;
-        }
+      return parsedResponse[0].accountId;
+    }
+
+    return null;
+  }
+
+  /**
+   * Assigns an issue to a user. 
+   * 
+   * https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issues/#api-rest-api-3-issue-issueidorkey-delete
+   */
+  assignIssueToUser(issueIdOrKey, accountId) {
+    let encCred = Utilities.base64Encode(this.user + ':' + this.password);
+    let url = this.host + "/rest/api/3/issue/" + issueIdOrKey + "/assignee";
+    let headers = { "Authorization": "Basic " + encCred };
+
+    let requestData = {
+      "accountId": accountId
+    };
+
+    let options = {
+      "method": "PUT",
+      "contentType": "application/json",
+      "headers": headers,
+      "payload": JSON.stringify(requestData),
+    };
+
+    let response = UrlFetchApp.fetch(url, options);
+  }
+
+  /**
+   * Assign specified user QA tasks to anotherspecified user.
+   */
+  assignQaTasksToAnotherPerson(emailAddressFrom, emailAddressTo) {
+    let fromQaTasks = this.searchForIssues('status=QA AND assignee="' + emailAddressFrom + '"');
+    let accountToId = this.findUserIdByEmail(emailAddressTo);
+    let self = this;
+
+    if (fromQaTasks.issues.length > 0) {
+      Logger.log("Total QA issues extracted: " + fromQaTasks.issues.length);
+      fromQaTasks.issues.forEach(function (issue) {
+        self.assignIssueToUser(issue.id, accountToId);
+        Logger.log("Assigend issue '" + issue.id + " - " + issue.key + "' to account '" + accountToId + " - " + emailAddressTo + "'.");
       });
     }
-    */
-
-    // return timeSpentSeconds;
   }
 }

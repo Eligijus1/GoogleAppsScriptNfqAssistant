@@ -2,6 +2,15 @@ function debug() {
   /*
   let userProperties = PropertiesService.getUserProperties();
   let jiraAtlantic = new Jira(userProperties.getProperty('JIRA_ATLANTIC_HOST'), userProperties.getProperty('JIRA_ATLANTIC_USER'), userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
+  Logger.log(jiraAtlantic.findUserIdByEmail('justas@atlanticexpresscorp.com'));
+  //jiraAtlantic.assignIssueToUser('AECP-1709', '5d113a411815840c9d800f8e');
+  //jiraAtlantic.assignIssueToUser('AECP-1709', 'justas@atlanticexpresscorp.com');
+  // 5d113a411815840c9d800f8e
+  */
+
+  /*
+  let userProperties = PropertiesService.getUserProperties();
+  let jiraAtlantic = new Jira(userProperties.getProperty('JIRA_ATLANTIC_HOST'), userProperties.getProperty('JIRA_ATLANTIC_USER'), userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
   jiraAtlantic.searchForIssues('status=QA AND assignee="eligijus.stugys@nfq.lt"');
   */
 
