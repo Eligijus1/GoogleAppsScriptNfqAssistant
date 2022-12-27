@@ -12,22 +12,14 @@ class Jira {
     console.log(`Jira (host=${this.host}, user=${this.user})`);
   }
 
-  // NOTES: 
-  // ======
-  // Get issue API manual     : https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issues/#api-rest-api-3-issue-issueidorkey-get
-  //
-  // Issue worklogs API manual: https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-worklogs/
-  //                            https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issue-worklogs/#api-rest-api-2-issue-issueidorkey-worklog-post
-  //
   /**
-   * From Atlantic JIRA API extract today WorkLog ids.
+   * Eextract today WorkLog ids.
    */
-  getJiraApiAtlanticTodayWorkLogIds() {
-    let userProperties = PropertiesService.getUserProperties();
+  getTodayWorkLogIds() {
     let dayStartDateTime = new Date(new Date().setHours(0, 0, 0, 0));
     let dayStartUnixFormat = dayStartDateTime.getTime().toString();
-    let encCred = Utilities.base64Encode(userProperties.getProperty('JIRA_ATLANTIC_USER') + ':' + userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
-    let url = userProperties.getProperty('JIRA_ATLANTIC_HOST') + "/rest/api/3/worklog/updated?since=" + dayStartUnixFormat;
+    let encCred = Utilities.base64Encode(this.user + ':' + this.password);
+    let url = this.host + "/rest/api/3/worklog/updated?since=" + dayStartUnixFormat;
     let headers = { "Authorization": "Basic " + encCred };
 
     let options = {
@@ -38,7 +30,6 @@ class Jira {
 
     let response = UrlFetchApp.fetch(url, options);
     let parsedResponse = JSON.parse(response);
-    //Logger.log(parsedResponse.values);
 
     let worklogIds = [];
 
@@ -52,17 +43,16 @@ class Jira {
   }
 
   /**
-   * From Atlantic JIRA API extract today WorkLog ids.
+   * Extract today WorkLog ids.
    */
-  getJiraApiAtlanticYesterdayWorkLogIds() {
-    let userProperties = PropertiesService.getUserProperties();
+  getYesterdayWorkLogIds() {
     let MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
     let now = new Date();
     let yesterday = new Date(now.getTime() - MILLIS_PER_DAY);
     let dayStartDateTime = new Date(yesterday.setHours(0, 0, 0, 0));
     let dayStartUnixFormat = dayStartDateTime.getTime().toString();
-    let encCred = Utilities.base64Encode(userProperties.getProperty('JIRA_ATLANTIC_USER') + ':' + userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
-    let url = userProperties.getProperty('JIRA_ATLANTIC_HOST') + "/rest/api/3/worklog/updated?since=" + dayStartUnixFormat;
+    let encCred = Utilities.base64Encode(this.user + ':' + this.password);
+    let url = this.host + "/rest/api/3/worklog/updated?since=" + dayStartUnixFormat;
     let headers = { "Authorization": "Basic " + encCred };
 
     let options = {
@@ -73,7 +63,6 @@ class Jira {
 
     let response = UrlFetchApp.fetch(url, options);
     let parsedResponse = JSON.parse(response);
-    //Logger.log(parsedResponse.values);
 
     let worklogIds = [];
 
@@ -87,12 +76,13 @@ class Jira {
   }
 
   /**
-   * By specified ID array extract worklog details.
+   * Extract Issues IDs by specified worklog id.
+   * 
+   * https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-worklogs/#api-rest-api-3-worklog-list-post
    */
-  getJiraApiAtlanticIssuesByWorkLogIdsAndAuthorEmail(atlanticTodayWorkLogIds, emailAddress) {
-    let userProperties = PropertiesService.getUserProperties();
-    let encCred = Utilities.base64Encode(userProperties.getProperty('JIRA_ATLANTIC_USER') + ':' + userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
-    let url = userProperties.getProperty('JIRA_ATLANTIC_HOST') + "/rest/api/3/worklog/list";
+  getIssuesIdsByWorkLogIdsAndAuthorEmail(atlanticTodayWorkLogIds, emailAddress) {
+    let encCred = Utilities.base64Encode(this.user + ':' + this.password);
+    let url = this.host + "/rest/api/3/worklog/list";
     let headers = { "Authorization": "Basic " + encCred };
 
     let requestData = {
@@ -123,21 +113,21 @@ class Jira {
   }
 
   /**
-   * Extract keys (for example AECP-67) by ids.
+   * Extract Issues keys (for example AECP-67) by Issues ids.
    */
-  getJiraApiAtlanticWorkedIssuesKeysByIssuesIds(issueIds) {
-    let userProperties = PropertiesService.getUserProperties();
-    let encCred = Utilities.base64Encode(userProperties.getProperty('JIRA_ATLANTIC_USER') + ':' + userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
+  getIssuesKeysByIssuesIds(issueIds) {
+    let encCred = Utilities.base64Encode(this.user + ':' + this.password);
     let headers = { "Authorization": "Basic " + encCred };
     let options = { "method": "GET", "contentType": "application/json", "headers": headers };
     let url = '';
     let response = null;
     let parsedResponse = null;
     let issuesKeys = [];
+    let currentHost = this.host;
 
     if (issueIds.length > 0) {
       issueIds.forEach(function (issueId) {
-        url = userProperties.getProperty('JIRA_ATLANTIC_HOST') + "/rest/api/3/issue/" + issueId;
+        url = currentHost + "/rest/api/3/issue/" + issueId;
         response = UrlFetchApp.fetch(url, options);
         parsedResponse = JSON.parse(response);
         if (issuesKeys.indexOf(parsedResponse.key) === -1) {
@@ -150,15 +140,41 @@ class Jira {
   }
 
   /**
-   * Add work log entry to NFQ JIRA over API v2.
+   * Add work log entry.
+   * 
+   * https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-worklogs/#api-rest-api-3-issue-issueidorkey-worklog-post
    */
-  addJiraApiNfqWorklogEntry(issueIdOrKey, timeSpentSeconds, comment) {
-    let userProperties = PropertiesService.getUserProperties();
-    let url = userProperties.getProperty('JIRA_NFQ_HOST') + "/rest/api/2/issue/" + issueIdOrKey + "/worklog";
-    let encCred = Utilities.base64Encode(userProperties.getProperty('JIRA_NFQ_USER') + ':' + userProperties.getProperty('JIRA_NFQ_PASSWORD'));
+  addWorklogEntry(issueIdOrKey, timeSpentSeconds, comment) {
+    let url = this.host + "/rest/api/3/issue/" + issueIdOrKey + "/worklog";
+    let encCred = Utilities.base64Encode(this.user + ':' + this.password);
     let headers = { "Authorization": "Basic " + encCred };
-    let requestData = { "timeSpentSeconds": timeSpentSeconds, "comment": comment };
-    let options = { "method": "POST", "contentType": "application/json", "headers": headers, "payload": JSON.stringify(requestData) };
+
+    let requestData = {
+      "timeSpentSeconds": timeSpentSeconds,
+      "comment": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "text": comment,
+                "type": "text"
+              }
+            ]
+          }
+        ]
+      }
+    };
+
+    let options = {
+      "method": "POST",
+      "contentType": "application/json",
+      "headers": headers,
+      "payload": JSON.stringify(requestData)
+    };
+
     let response = UrlFetchApp.fetch(url, options);
     let parsedResponse = JSON.parse(response);
 
@@ -166,17 +182,16 @@ class Jira {
   }
 
   /**
-   * By specified ID array extract worklog details.
+   * Extract today total time.
    */
-  getJiraApiAtlanticTotalWorkHoursByWorkLogIdsAndAuthorEmail(atlanticTodayWorkLogIds, emailAddress) {
-    let userProperties = PropertiesService.getUserProperties();
-    let encCred = Utilities.base64Encode(userProperties.getProperty('JIRA_ATLANTIC_USER') + ':' + userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
-    let url = userProperties.getProperty('JIRA_ATLANTIC_HOST') + "/rest/api/3/worklog/list";
+  getTotalWorkHoursByWorkLogIdsAndAuthorEmail(todayWorkLogIds, emailAddress) {
+    let encCred = Utilities.base64Encode(this.user + ':' + this.password);
+    let url = this.host + "/rest/api/3/worklog/list";
     let headers = { "Authorization": "Basic " + encCred };
     let timeSpentSeconds = 0;
 
     let requestData = {
-      "ids": atlanticTodayWorkLogIds
+      "ids": todayWorkLogIds
     };
 
     let options = {
@@ -205,10 +220,9 @@ class Jira {
   /**
    * Create subtask.
    */
-  jiraApiAtlanticCreateSubtask(projectKey, parentKey, summary, description, issueTypeId) {
-    let userProperties = PropertiesService.getUserProperties();
-    let encCred = Utilities.base64Encode(userProperties.getProperty('JIRA_ATLANTIC_USER') + ':' + userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
-    let url = userProperties.getProperty('JIRA_ATLANTIC_HOST') + "/rest/api/2/issue";
+  createSubtask(projectKey, parentKey, summary, description, issueTypeId) {
+    let encCred = Utilities.base64Encode(this.user + ':' + this.password);
+    let url = this.h + "/rest/api/3/issue";
     let headers = { "Authorization": "Basic " + encCred };
 
     let requestData = {
@@ -249,5 +263,142 @@ class Jira {
     //console.info("Case URL: ", "https://atlanticexp.atlassian.net/browse/" + parsedResponse.key);
 
     return "https://atlanticexp.atlassian.net/browse/" + parsedResponse.key;
+  }
+
+  /**
+   * Extract existing workflows.
+   * 
+   * NOTE: Only Jira administrators can access workflows.
+   * 
+   * https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-workflows/#api-rest-api-3-workflow-search-get
+   */
+  getWorkflows() {
+    let encCred = Utilities.base64Encode(this.user + ':' + this.password);
+    let url = this.host + "/rest/api/3/workflow/search";
+    let headers = { "Authorization": "Basic " + encCred };
+    let timeSpentSeconds = 0;
+
+    let options = {
+      "method": "GET",
+      "contentType": "application/json",
+      "headers": headers
+    };
+
+    let response = UrlFetchApp.fetch(url, options);
+    console.log(response);
+    //let parsedResponse = JSON.parse(response);
+
+    /*
+    if (parsedResponse.length > 0) {
+      parsedResponse.forEach(function (value) {
+        if (value.author.emailAddress === emailAddress) {
+          //console.info(value.timeSpent);
+          //console.info(value.timeSpentSeconds);
+          timeSpentSeconds += value.timeSpentSeconds;
+        }
+      });
+    }
+    */
+
+    //return timeSpentSeconds;
+  }
+
+  /**
+   * Search issues.
+   * 
+   * https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-search/#api-rest-api-3-search-post
+   */
+  searchForIssues(jql) {
+    let encCred = Utilities.base64Encode(this.user + ':' + this.password);
+    let url = this.host + "/rest/api/3/search";
+    let headers = { "Authorization": "Basic " + encCred };
+    //let jql = '("Epic Link" = AEWL2-73)';
+    //let jql = '(parent=AEWL2-73 OR "Epic Link"=AEWL2-73 OR "Parent Link"=AEWL2-73) AND status not in (Closed,Done,Canceled,Declined,Not-Needed,QA) AND assignee="eligijus.stugys@nfq.lt"'
+    //let jql = 'status=QA AND assignee="eligijus.stugys@nfq.lt"'
+
+    let requestData = {
+      "jql": jql,
+      /*
+      "expand": [
+        "names",
+        "schema",
+        "operations"
+      ],
+      */
+      "maxResults": 50,
+      "fieldsByKeys": false,
+      "fields": [
+        //"summary",
+        //"status",
+        //"assignee"
+        "id",
+        "key",
+        "assignee.displayName"
+      ],
+      "startAt": 0
+    };
+
+    let options = {
+      "method": "POST",
+      "contentType": "application/json",
+      "headers": headers,
+      "payload": JSON.stringify(requestData),
+    };
+
+    let response = UrlFetchApp.fetch(url, options);
+    let parsedResponse = JSON.parse(response);
+
+    // DEBUG:
+    /*
+    Logger.log("Total issues extracted: " + parsedResponse.issues.length);
+    parsedResponse.issues.forEach(function (issue) {
+      
+      Logger.log(issue.id + " - " + issue.key);
+    });
+    */
+
+    return parsedResponse;
+  }
+
+  /**
+   * Assign specified user QA tasks to anotherspecified user.
+   * 
+   * https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issues/#api-rest-api-3-issue-issueidorkey-assignee-put
+   * 
+   * TODO: implement
+   */
+  assignQaTasksToAnotherPerson(emailAddressFrom, emailAddressTo) {
+    let encCred = Utilities.base64Encode(this.user + ':' + this.password);
+    let url = this.host + "/rest/api/3/worklog/list";
+    let headers = { "Authorization": "Basic " + encCred };
+    let fromQaTasks = this.jiraAtlantic.searchForIssues('status=QA AND assignee="eligijus.stugys@nfq.lt"');
+
+    let requestData = {
+      "ids": atlanticTodayWorkLogIds
+    };
+
+    let options = {
+      "method": "POST",
+      "contentType": "application/json",
+      "headers": headers,
+      "payload": JSON.stringify(requestData)
+    };
+
+    let response = UrlFetchApp.fetch(url, options);
+    let parsedResponse = JSON.parse(response);
+
+    /*
+    if (parsedResponse.length > 0) {
+      parsedResponse.forEach(function (value) {
+        if (value.author.emailAddress === emailAddress) {
+          //console.info(value.timeSpent);
+          //console.info(value.timeSpentSeconds);
+          timeSpentSeconds += value.timeSpentSeconds;
+        }
+      });
+    }
+    */
+
+    // return timeSpentSeconds;
   }
 }

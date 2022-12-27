@@ -1,5 +1,76 @@
 function debug() {
   /*
+  let userProperties = PropertiesService.getUserProperties();
+  let jiraAtlantic = new Jira(userProperties.getProperty('JIRA_ATLANTIC_HOST'), userProperties.getProperty('JIRA_ATLANTIC_USER'), userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
+  jiraAtlantic.searchForIssues('status=QA AND assignee="eligijus.stugys@nfq.lt"');
+  */
+
+  /*
+    let userProperties = PropertiesService.getUserProperties();
+    let jiraAtlantic = new Jira(userProperties.getProperty('JIRA_ATLANTIC_HOST'), userProperties.getProperty('JIRA_ATLANTIC_USER'), userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
+    jiraAtlantic.getWorkflows();
+  */
+
+  /*
+  let userProperties = PropertiesService.getUserProperties();
+  let jiraAtlantic = new Jira(userProperties.getProperty('JIRA_ATLANTIC_HOST'), userProperties.getProperty('JIRA_ATLANTIC_USER'), userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
+  let todayWorkLogIds = jiraAtlantic.getTodayWorkLogIds();
+  let totalWorkHours = jiraAtlantic.getTotalWorkHoursByWorkLogIdsAndAuthorEmail(todayWorkLogIds, 'eligijus.stugys@nfq.lt');
+  Logger.log("totalWorkHours: " + totalWorkHours);
+  */
+
+  /*
+    let userProperties = PropertiesService.getUserProperties();
+    let jiraAtlantic = new Jira(userProperties.getProperty('JIRA_ATLANTIC_HOST'), userProperties.getProperty('JIRA_ATLANTIC_USER'), userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
+    jiraAtlantic.addWorklogEntry('AECP-67', 3600, 'Test 1')
+  */
+
+  /*
+      let userProperties = PropertiesService.getUserProperties();
+      let jiraAtlantic = new Jira(userProperties.getProperty('JIRA_ATLANTIC_HOST'), userProperties.getProperty('JIRA_ATLANTIC_USER'), userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
+      let todayWorkLogIds = jiraAtlantic.getTodayWorkLogIds();
+      //Logger.log("todayWorkLogIds: " + todayWorkLogIds);
+      let yesterdayWorkLogIds = jiraAtlantic.getYesterdayWorkLogIds();
+      //Logger.log("yesterdayWorkLogIds: " + yesterdayWorkLogIds);
+      let issuesIds = jiraAtlantic.getIssuesIdsByWorkLogIdsAndAuthorEmail(todayWorkLogIds, 'eligijus.stugys@nfq.lt')
+      //Logger.log("issuesIds: " + issuesIds);
+      let issuesKeys = jiraAtlantic.getIssuesKeysByIssuesIds(issuesIds);
+      //Logger.log("issuesKeys: " + issuesKeys);
+      jiraAtlantic.addWorklogEntry(issueIdOrKey, timeSpentSeconds, comment)
+  */
+
+  // var name = Browser.inputBox('Enter your name', Browser.Buttons.OK_CANCEL);
+  /*
+  // https://developers.google.com/apps-script/reference/mail/mail-app
+  MailApp.sendEmail({
+    to: "eligijus.stugys@nfq.lt",
+    subject: "Test mail 1",
+    htmlBody: "Test 1<br>" +
+      "Test 2"
+  });
+  */
+  /*
+  var emailQuotaRemaining = MailApp.getRemainingDailyQuota();
+  Logger.log("Remaining daily email quota: " + emailQuotaRemaining);
+  MailApp.sendEmail("eligijus.stugys@nfq.lt",
+                  "eligijus.stugys@nfq.lt",
+                  "TPS report status",
+                  "What is the status of those TPS reports?");
+  */
+  /*
+  MailApp.sendEmail({
+    to: "eligijus.stugys@gmail.com",
+    subject: "Test mail 1",
+    htmlBody: "inline Google Logo<img src='cid:googleLogo'> images! <br>" +
+      "inline YouTube Logo <img src='cid:youtubeLogo'>",
+    inlineImages:
+    {
+      googleLogo: googleLogoBlob,
+      youtubeLogo: youtubeLogoBlob
+    }
+  });
+  */
+  /*
     return CardService
      .newCardBuilder()
      .setHeader(
