@@ -2,7 +2,7 @@
  * Main cron method, that is executed every time.
  */
 function main() {
-  Logger.log("'main' method started.");
+  Logger.log("Assistant v1 'main' method started.");
 
   let userProperties = PropertiesService.getUserProperties();
   //let jiraNfq = new Jira(userProperties.getProperty('JIRA_NFQ_HOST'), userProperties.getProperty('JIRA_NFQ_USER'), userProperties.getProperty('JIRA_NFQ_PASSWORD'));
