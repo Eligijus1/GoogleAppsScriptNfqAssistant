@@ -13,7 +13,7 @@ class Jira {
   }
 
   /**
-   * Eextract today WorkLog ids.
+   * Extract today WorkLog ids.
    */
   getTodayWorkLogIds() {
     let dayStartDateTime = new Date(new Date().setHours(0, 0, 0, 0));
@@ -333,7 +333,8 @@ class Jira {
         //"assignee"
         "id",
         "key",
-        "assignee.displayName"
+        "assignee.displayName",
+        "timetracking"
       ],
       "startAt": 0
     };
@@ -423,6 +424,23 @@ class Jira {
       fromQaTasks.issues.forEach(function (issue) {
         self.assignIssueToUser(issue.id, accountToId);
         Logger.log("Assigend issue '" + issue.id + " - " + issue.key + "' to account '" + accountToId + " - " + emailAddressTo + "'.");
+      });
+    }
+  }
+
+  /**
+   * Unassign specified user Done tasks.
+   */
+  unAssignDoneTasksFromPerson(emailAddressFrom) {
+    let fromQaTasks = this.searchForIssues('status=Done AND assignee="' + emailAddressFrom + '"');
+    let self = this;
+    let accountToId = null;
+
+    if (fromQaTasks.issues.length > 0) {
+      Logger.log("Total QA issues extracted: " + fromQaTasks.issues.length);
+      fromQaTasks.issues.forEach(function (issue) {
+        self.assignIssueToUser(issue.id, accountToId);
+        Logger.log("Issue '" + issue.id + " - " + issue.key + "' unassigned from account '" + emailAddressFrom + "'.");
       });
     }
   }

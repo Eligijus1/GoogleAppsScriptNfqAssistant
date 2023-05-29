@@ -1,4 +1,17 @@
 function debug() {
+  let userProperties = PropertiesService.getUserProperties();
+  let jiraAtlantic = new Jira(userProperties.getProperty('JIRA_ATLANTIC_HOST'), userProperties.getProperty('JIRA_ATLANTIC_USER'), userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
+  let originalEstimate = "";
+  parsedResponse = jiraAtlantic.searchForIssues('assignee=5d5e6512e09baa0d74878c69 and status not in (Done,Not-Needed,QA) and issuetype = Story order by priority DESC');
+  parsedResponse.issues.forEach(function (issue) {
+    if (typeof (issue.fields.timetracking.originalEstimate) === "undefined") {
+      Logger.log(issue.id + " - " + issue.key);
+    }
+    else {
+      Logger.log(issue.id + " - " + issue.key + " - " + issue.fields.timetracking.originalEstimate);
+      //Logger.log(issue);
+    }
+  });
   /*
   let userProperties = PropertiesService.getUserProperties();
   let jiraAtlantic = new Jira(userProperties.getProperty('JIRA_ATLANTIC_HOST'), userProperties.getProperty('JIRA_ATLANTIC_USER'), userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
