@@ -15,8 +15,7 @@ class Jira {
   /**
    * Extract today WorkLog ids.
    */
-  getTodayWorkLogIds() {
-    let dayStartDateTime = new Date(new Date().setHours(0, 0, 0, 0));
+  getTodayWorkLogIds(dayStartDateTime) {
     let dayStartUnixFormat = dayStartDateTime.getTime().toString();
     let encCred = Utilities.base64Encode(this.user + ':' + this.password);
     let url = this.host + "/rest/api/3/worklog/updated?since=" + dayStartUnixFormat;
@@ -442,6 +441,26 @@ class Jira {
         self.assignIssueToUser(issue.id, accountToId);
         Logger.log("Issue '" + issue.id + " - " + issue.key + "' unassigned from account '" + emailAddressFrom + "'.");
       });
+    }
+  }
+
+  /**
+  * Copy hours report from current Jira to specified in variable "jiraDestination" Jira.
+  */
+  copyHoursReportToAnotherJiraCase(destinationIssueIdOrKey, dateTime, destinationJira, prefix) {
+    let userProperties = PropertiesService.getUserProperties();
+    let email = userProperties.getProperty('JIRA_ATLANTIC_USER');
+
+    let atlanticTodayWorkLogIds = this.getTodayWorkLogIds(dateTime);
+    let atlanticIssueIds = this.getIssuesIdsByWorkLogIdsAndAuthorEmail(atlanticTodayWorkLogIds, email);
+    let atlanticTimeSpentSeconds = this.getTotalWorkHoursByWorkLogIdsAndAuthorEmail(atlanticTodayWorkLogIds, email);
+    let atlanticissuesKeys = this.getIssuesKeysByIssuesIds(atlanticIssueIds);
+
+    if (atlanticissuesKeys.length > 0) {
+      let csvString = atlanticissuesKeys.join(",");
+      let message = prefix + csvString;
+      //destinationJira.addWorklogEntry(destinationIssueIdOrKey, atlanticTimeSpentSeconds, message);
+      Logger.log("Registerred to destination case " + destinationIssueIdOrKey + " " + atlanticTimeSpentSeconds / 60 / 60 + " hours (" + atlanticTimeSpentSeconds + " seconds) with message: " + message);
     }
   }
 }
