@@ -139,11 +139,26 @@ class Jira {
   }
 
   /**
-   * Add work log entry.
+   * Add work log entry over API v2.
+   */
+  addWorklogEntryApiV2(issueIdOrKey, timeSpentSeconds, comment) {
+    let url = this.host + "/rest/api/2/issue/" + issueIdOrKey + "/worklog";
+    let encCred = Utilities.base64Encode(this.user + ':' + this.password);
+    let headers = { "Authorization": "Basic " + encCred };
+    let requestData = { "timeSpentSeconds": timeSpentSeconds, "comment": comment };
+    let options = { "method": "POST", "contentType": "application/json", "headers": headers, "payload": JSON.stringify(requestData) };
+    let response = UrlFetchApp.fetch(url, options);
+    let parsedResponse = JSON.parse(response);
+
+    Logger.log(parsedResponse);
+  }
+
+  /**
+   * Add work log entry over API v3.
    * 
    * https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-worklogs/#api-rest-api-3-issue-issueidorkey-worklog-post
    */
-  addWorklogEntry(issueIdOrKey, timeSpentSeconds, comment) {
+  addWorklogEntryApiV3(issueIdOrKey, timeSpentSeconds, comment) {
     let url = this.host + "/rest/api/3/issue/" + issueIdOrKey + "/worklog";
     let encCred = Utilities.base64Encode(this.user + ':' + this.password);
     let headers = { "Authorization": "Basic " + encCred };
@@ -171,10 +186,12 @@ class Jira {
       "method": "POST",
       "contentType": "application/json",
       "headers": headers,
-      "payload": JSON.stringify(requestData)
+      "payload": JSON.stringify(requestData),
+     // "muteHttpExceptions": true
     };
 
     let response = UrlFetchApp.fetch(url, options);
+    //Logger.log(response);
     let parsedResponse = JSON.parse(response);
 
     Logger.log(parsedResponse);
@@ -459,8 +476,8 @@ class Jira {
     if (atlanticissuesKeys.length > 0) {
       let csvString = atlanticissuesKeys.join(",");
       let message = prefix + csvString;
-      //destinationJira.addWorklogEntry(destinationIssueIdOrKey, atlanticTimeSpentSeconds, message);
-      Logger.log("Registerred to destination case " + destinationIssueIdOrKey + " " + atlanticTimeSpentSeconds / 60 / 60 + " hours (" + atlanticTimeSpentSeconds + " seconds) with message: " + message);
+      destinationJira.addWorklogEntryApiV2(destinationIssueIdOrKey, atlanticTimeSpentSeconds, message);
+      Logger.log("Registerred to destination case " + destinationIssueIdOrKey + " " + atlanticTimeSpentSeconds / 60 / 60 + " hours (" + atlanticTimeSpentSeconds + " seconds) with message: '" + message + "'");
     }
   }
 }
