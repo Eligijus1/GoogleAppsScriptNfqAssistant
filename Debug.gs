@@ -1,8 +1,9 @@
 function debug() {
+  /*
   let userProperties = PropertiesService.getUserProperties();
   let jiraAtlantic = new Jira(userProperties.getProperty('JIRA_ATLANTIC_HOST'), userProperties.getProperty('JIRA_ATLANTIC_USER'), userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
   let originalEstimate = "";
-  parsedResponse = jiraAtlantic.searchForIssues('assignee=5d5e6512e09baa0d74878c69 and status not in (Done,Not-Needed,QA) and issuetype = Story order by priority DESC');
+  parsedResponse = jiraAtlantic.searchForIssues('assignee=?? and status not in (Done,Not-Needed,QA) and issuetype = Story order by priority DESC');
   parsedResponse.issues.forEach(function (issue) {
     if (typeof (issue.fields.timetracking.originalEstimate) === "undefined") {
       Logger.log(issue.id + " - " + issue.key);
@@ -12,19 +13,16 @@ function debug() {
       //Logger.log(issue);
     }
   });
+  */
   /*
   let userProperties = PropertiesService.getUserProperties();
   let jiraAtlantic = new Jira(userProperties.getProperty('JIRA_ATLANTIC_HOST'), userProperties.getProperty('JIRA_ATLANTIC_USER'), userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
-  Logger.log(jiraAtlantic.findUserIdByEmail('justas@atlanticexpresscorp.com'));
-  //jiraAtlantic.assignIssueToUser('AECP-1709', '5d113a411815840c9d800f8e');
-  //jiraAtlantic.assignIssueToUser('AECP-1709', 'justas@atlanticexpresscorp.com');
-  // 5d113a411815840c9d800f8e
-  */
+  Logger.log(jiraAtlantic.findUserIdByEmail('???'));
+    */
 
   /*
   let userProperties = PropertiesService.getUserProperties();
   let jiraAtlantic = new Jira(userProperties.getProperty('JIRA_ATLANTIC_HOST'), userProperties.getProperty('JIRA_ATLANTIC_USER'), userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
-  jiraAtlantic.searchForIssues('status=QA AND assignee="eligijus.stugys@nfq.lt"');
   */
 
   /*
@@ -37,8 +35,7 @@ function debug() {
   let userProperties = PropertiesService.getUserProperties();
   let jiraAtlantic = new Jira(userProperties.getProperty('JIRA_ATLANTIC_HOST'), userProperties.getProperty('JIRA_ATLANTIC_USER'), userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
   let todayWorkLogIds = jiraAtlantic.getTodayWorkLogIds();
-  let totalWorkHours = jiraAtlantic.getTotalWorkHoursByWorkLogIdsAndAuthorEmail(todayWorkLogIds, 'eligijus.stugys@nfq.lt');
-  Logger.log("totalWorkHours: " + totalWorkHours);
+    Logger.log("totalWorkHours: " + totalWorkHours);
   */
 
   /*
@@ -54,8 +51,7 @@ function debug() {
       //Logger.log("todayWorkLogIds: " + todayWorkLogIds);
       let yesterdayWorkLogIds = jiraAtlantic.getYesterdayWorkLogIds();
       //Logger.log("yesterdayWorkLogIds: " + yesterdayWorkLogIds);
-      let issuesIds = jiraAtlantic.getIssuesIdsByWorkLogIdsAndAuthorEmail(todayWorkLogIds, 'eligijus.stugys@nfq.lt')
-      //Logger.log("issuesIds: " + issuesIds);
+            //Logger.log("issuesIds: " + issuesIds);
       let issuesKeys = jiraAtlantic.getIssuesKeysByIssuesIds(issuesIds);
       //Logger.log("issuesKeys: " + issuesKeys);
       jiraAtlantic.addWorklogEntry(issueIdOrKey, timeSpentSeconds, comment)
@@ -65,7 +61,7 @@ function debug() {
   /*
   // https://developers.google.com/apps-script/reference/mail/mail-app
   MailApp.sendEmail({
-    to: "eligijus.stugys@nfq.lt",
+    to: "???",
     subject: "Test mail 1",
     htmlBody: "Test 1<br>" +
       "Test 2"
@@ -74,14 +70,14 @@ function debug() {
   /*
   var emailQuotaRemaining = MailApp.getRemainingDailyQuota();
   Logger.log("Remaining daily email quota: " + emailQuotaRemaining);
-  MailApp.sendEmail("eligijus.stugys@nfq.lt",
-                  "eligijus.stugys@nfq.lt",
+  MailApp.sendEmail("???",
+                  "???",
                   "TPS report status",
                   "What is the status of those TPS reports?");
   */
   /*
   MailApp.sendEmail({
-    to: "eligijus.stugys@gmail.com",
+    to: "???",
     subject: "Test mail 1",
     htmlBody: "inline Google Logo<img src='cid:googleLogo'> images! <br>" +
       "inline YouTube Logo <img src='cid:youtubeLogo'>",
