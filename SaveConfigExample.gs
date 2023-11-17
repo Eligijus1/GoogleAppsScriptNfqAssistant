@@ -1,9 +1,9 @@
 /**
  * Method responsible for configuratio save.
  */
-function saveConfiguration() {
+function saveConfigurationExample() {
   let userProperties = PropertiesService.getUserProperties();
-  
+
   userProperties.setProperty('JIRA_NFQ_HOST', '???');
   userProperties.setProperty('JIRA_NFQ_USER', '???');
   userProperties.setProperty('JIRA_NFQ_PASSWORD', '???');
