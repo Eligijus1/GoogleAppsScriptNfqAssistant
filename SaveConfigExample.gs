@@ -12,5 +12,7 @@ function saveConfiguration() {
   userProperties.setProperty('JIRA_ATLANTIC_USER', '???');
   userProperties.setProperty('JIRA_ATLANTIC_PASSWORD', '???');
 
+  userProperties.setProperty('MAIL_J', '??');
+
   Logger.log(userProperties.getProperties());
 }

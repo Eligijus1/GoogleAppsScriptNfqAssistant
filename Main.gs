@@ -7,8 +7,8 @@ function main() {
   let userProperties = PropertiesService.getUserProperties();
   let jiraAtlantic = new Jira(userProperties.getProperty('JIRA_ATLANTIC_HOST'), userProperties.getProperty('JIRA_ATLANTIC_USER'), userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
 
-  jiraAtlantic.assignQaTasksToAnotherPerson('eligijus.stugys@nfq.com', 'justas@atlanticexpresscorp.com');
-  jiraAtlantic.unAssignDoneTasksFromPerson('eligijus.stugys@nfq.com');
+  jiraAtlantic.assignQaTasksToAnotherPerson(userProperties.getProperty('JIRA_ATLANTIC_USER'), userProperties.getProperty('MAIL_J'));
+  jiraAtlantic.unAssignDoneTasksFromPerson(userProperties.getProperty('JIRA_ATLANTIC_USER'));
 
   Logger.log("'main' method finished.");
 }
