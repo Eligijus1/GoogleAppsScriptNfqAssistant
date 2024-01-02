@@ -21,7 +21,8 @@ function registerTodayAtlanticJiraHoursToNfqJira() {
   let jiraAtlantic = new Jira(userProperties.getProperty('JIRA_ATLANTIC_HOST'), userProperties.getProperty('JIRA_ATLANTIC_USER'), userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
   let jiraNfq = new Jira(userProperties.getProperty('JIRA_NFQ_HOST'), userProperties.getProperty('JIRA_NFQ_USER'), userProperties.getProperty('JIRA_NFQ_PASSWORD'));
   let dayToday = new Date(new Date().setHours(0, 0, 0, 0));// Today
-  jiraAtlantic.copyHoursReportToAnotherJiraCase('AECP-8097', dayToday, jiraNfq, "Worked on Atlantic JIRA (https://atlanticexp.atlassian.net) cases: ");
+  //jiraAtlantic.copyHoursReportToAnotherJiraCase('AECP-8097', dayToday, jiraNfq, "Worked on Atlantic JIRA (https://atlanticexp.atlassian.net) cases: ");// Eligijus worklog 2023
+  jiraAtlantic.copyHoursReportToAnotherJiraCase('AECP-8149', dayToday, jiraNfq, "Worked on Atlantic JIRA (https://atlanticexp.atlassian.net) cases: ");// Eligijus worklog 2024
 }
 
 /**
@@ -32,5 +33,6 @@ function registerYesterdayAtlanticJiraHoursToNfqJira() {
   let jiraAtlantic = new Jira(userProperties.getProperty('JIRA_ATLANTIC_HOST'), userProperties.getProperty('JIRA_ATLANTIC_USER'), userProperties.getProperty('JIRA_ATLANTIC_PASSWORD'));
   let jiraNfq = new Jira(userProperties.getProperty('JIRA_NFQ_HOST'), userProperties.getProperty('JIRA_NFQ_USER'), userProperties.getProperty('JIRA_NFQ_PASSWORD'));
   let dayYesterday = new Date(new Date(new Date().setDate(new Date().getDate() - 1)).setHours(0, 0, 0, 0));
-  jiraAtlantic.copyHoursReportToAnotherJiraCase('AECP-8097', dayYesterday, jiraNfq, "Worked on Atlantic JIRA (https://atlanticexp.atlassian.net) cases: ");
+  //jiraAtlantic.copyHoursReportToAnotherJiraCase('AECP-8097', dayYesterday, jiraNfq, "Worked on Atlantic JIRA (https://atlanticexp.atlassian.net) cases: "); // Eligijus worklog 2023
+  jiraAtlantic.copyHoursReportToAnotherJiraCase('AECP-8149', dayYesterday, jiraNfq, "Worked on Atlantic JIRA (https://atlanticexp.atlassian.net) cases: "); // Eligijus worklog 2024
 }
